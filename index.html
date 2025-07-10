@@ -3,9 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Branx Agency - Agência Especializada em E-commerce</title>
+    <title>Branx Agência</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap"
         rel="stylesheet">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="img/favicon-light.ico" type="image/x-icon" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="img/favicon-dark.ico" type="image/x-icon" media="(prefers-color-scheme: dark)">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12504,9 +12508,9 @@
         </div>
         </div>
         <script>
-                        const container = document.getElementById("video-container");
-                        container.addEventListener("click", function () {
-                            container.innerHTML = `
+            const container = document.getElementById("video-container");
+            container.addEventListener("click", function () {
+                container.innerHTML = `
             <iframe 
                 width="100%" 
                 height="100%" 
@@ -12517,8 +12521,8 @@
                 allowfullscreen>
             </iframe>
         `;
-                        });
-                    </script>
+            });
+        </script>
     </section>
 
     <!-- Partners Section -->
@@ -13081,7 +13085,7 @@
 
 
             <div class="border-t border-white/10 pt-8 text-center">
-                <p class="text-white/50">© 2025 Branx Agency – Todos os direitos reservados</p>
+                <p class="text-white/50">© 2025 Branx Agência – Todos os direitos reservados</p>
             </div>
         </div>
     </footer>
@@ -13109,7 +13113,6 @@
 
                     const isOpen = content.style.maxHeight && content.style.maxHeight !== '0px';
 
-                    // Fecha todos os outros
                     accordionButtons.forEach(other => {
                         if (other !== button) {
                             const otherContent = other.nextElementSibling;
@@ -13147,9 +13150,6 @@
                 });
             });
 
-            // ========================
-            // 3. Form Submission
-            // ========================
             const contactForm = document.getElementById('contact-form');
 
             contactForm?.addEventListener('submit', (e) => {
@@ -13169,9 +13169,6 @@
                 contactForm.reset();
             });
 
-            // ========================
-            // 4. Fade-in on Scroll
-            // ========================
             const fadeElements = document.querySelectorAll('.fade-in');
 
             const fadeInOnScroll = () => {
@@ -13186,11 +13183,8 @@
             };
 
             window.addEventListener('scroll', fadeInOnScroll);
-            fadeInOnScroll(); // run on load
+            fadeInOnScroll();
 
-            // ========================
-            // 5. Smooth Scroll for Anchors
-            // ========================
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -13208,9 +13202,6 @@
                 });
             });
 
-            // ========================
-            // 6. Animated Typing Text
-            // ========================
             const texts = [
                 "para seu e-comerce",
                 "para pequenas empresas",
@@ -13264,7 +13255,6 @@
                 const scrolled = window.scrollY;
 
                 if (window.innerWidth > 1450) {
-                    // Telas grandes com efeito de scroll
                     if (scrolled > 40) {
                         header.style.padding = '10px 25px';
                         header.classList.remove('mx-[150px]');
@@ -13279,18 +13269,17 @@
                         if (logo) logo.style.transform = 'scale(1)';
                     }
                 } else {
-                    // Telas menores ou iguais a 1450px - define padding e margem específicos
-                    header.style.padding = '10px 50px'; // ajuste conforme desejar
+                    header.style.padding = '10px 50px';
                     header.style.transform = 'scale(1)';
                     header.classList.remove('mx-[150px]', 'mx-[300px]');
-                    header.classList.add('mx-[60]'); // ou use mx-auto se quiser centralizar
+                    header.classList.add('mx-[60]');
                     if (logo) logo.style.transform = 'scale(1)';
                 }
             }
 
-            applyScrollEffect(); // Ao carregar
-            window.addEventListener('scroll', applyScrollEffect); // Ao rolar
-            window.addEventListener('resize', applyScrollEffect); // Ao redimensionar
+            applyScrollEffect();
+            window.addEventListener('scroll', applyScrollEffect); 
+            window.addEventListener('resize', applyScrollEffect); 
         });
     </script>
 
