@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório de Performance - Dinâmico</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    /* O SEU CSS FOI MANTIDO INTACTO AQUI */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f5f7fb;
+      color: #0f172a;
+      padding: 2rem;
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+
+    .rp-wrap {
+      max-width: 1100px;
+      margin: auto;
+      width: 100%;
+    }
+
+    .rp-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid #FF5100;
+      padding-bottom: 1rem;
+    }
+
+    .rp-header-icon {
+      width: 36px;
+      height: 36px;
+      background: #FF5100;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .rp-header h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000000;
+      margin: 0;
+    }
+
+    .rp-header p {
+      font-size: 13px;
+      color: #64748b;
+      margin: 0;
+    }
+
+    .rp-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+      margin-bottom: 2rem;
+    }
+
+    .rp-card {
+      background: #fff;
+      border: 0.5px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .rp-card:hover {
+      border-color: #FF5100;
+    }
+
+    .rp-card-accent {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: #FF5100;
+      border-radius: 12px 0 0 12px;
+    }
+
+    .rp-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: rgba(255, 81, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .rp-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: #FF5100;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .rp-label {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 400;
+      margin-bottom: 4px;
+    }
+
+    .rp-value {
+      font-size: 22px;
+      font-weight: 600;
+      color: #0f172a;
+      line-height: 1.1;
+    }
+
+    .rp-value.dash {
+      color: #94a3b8;
+      font-size: 18px;
+    }
+
+    .rp-saiba-mais-wrap {
+      margin-top: 12px;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      padding-top: 10px;
+    }
+
+    .rp-btn-saiba-mais {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #FF5100;
+      background: none;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      transition: opacity 0.2s;
+    }
+
+    .rp-btn-saiba-mais:hover {
+      opacity: 0.8;
+    }
+
+    .rp-btn-saiba-mais svg {
+      width: 14px;
+      height: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .rp-saiba-mais-conteudo {
+      display: none;
+      font-size: 11px;
+      color: #64748b;
+      line-height: 1.4;
+      margin-top: 8px;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 6px;
+    }
+
+    .rp-card.is-open {
+      border-color: #FF5100;
+      box-shadow: 0 4px 12px rgba(255, 81, 0, 0.08);
+    }
+
+    .rp-card.is-open .rp-btn-saiba-mais svg {
+      transform: rotate(180deg);
+    }
+
+    .rp-card.is-open .rp-saiba-mais-conteudo {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-5px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .rp-charts-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      width: 100%;
+      min-width: 0;
+    }
+
+    @media (min-width: 768px) {
+      .rp-charts-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .rp-chart-card {
+      background: #fff;
+      border: 0.5px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .rp-chart-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+    }
+
+    .rp-chart-header h2 {
+      font-size: 15px;
+      font-weight: 500;
+      color: #0f172a;
+      margin: 0;
+    }
+
+    .rp-badge {
+      font-size: 11px;
+      background: rgba(255, 81, 0, 0.1);
+      color: #FF5100;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    .rp-chart-relative-container {
+      position: relative;
+      width: 100%;
+      min-width: 0;
+    }
+
+    .rp-scroll-gradient {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50px;
+      height: calc(100% - 10px);
+      background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 90%);
+      pointer-events: none;
+      z-index: 10;
+      transition: opacity 0.3s ease;
+      display: none;
+    }
+
+    .rp-chart-scroll-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 15px;
+    }
+
+    .rp-chart-scroll-wrapper::-webkit-scrollbar {
+      height: 6px;
+    }
+
+    .rp-chart-scroll-wrapper::-webkit-scrollbar-track {
+      background: #f1f5f9;
+      border-radius: 10px;
+    }
+
+    .rp-chart-scroll-wrapper::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 10px;
+    }
+
+    .rp-chart-container {
+      position: relative;
+      height: 240px;
+      width: 100%;
+      min-width: 350px;
+    }
+
+    .rp-scroll-hint {
+      display: none;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      font-size: 10px;
+      color: #94a3b8;
+      margin-bottom: 10px;
+      font-weight: 500;
+      transition: opacity 0.3s ease;
+    }
+
+    .rp-scroll-hint svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .logocliente {
+      width: 40px;
+      height: 40px;
+      border-radius: 100%;
+      box-shadow: 0px 6px 20px rgb(0 0 0 / 8%);
+    }
+
+    .rp-legend {
+      display: flex;
+      gap: 1.5rem;
+      margin-top: 1rem;
+      justify-content: center;
+    }
+
+    .rp-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: #64748b;
+    }
+
+    .rp-legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 767px) {
+      body {
+        padding: 1rem;
+      }
+
+      .rp-scroll-hint {
+        display: flex !important;
+      }
+
+      .rp-scroll-gradient {
+        display: block;
+      }
+
+      .rp-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="rp-wrap">
+
+    <div class="rp-header">
+      <img src="Logo clientes/sigo.jpg" class="logocliente" alt="Logo Cliente">
+      <div>
+        <h1 id="titulo-cliente">Carregando relatório...</h1>
+        <p id="subtitulo-mes">Buscando dados · Resumo geral</p>
+      </div>
+    </div>
+
+    <div class="rp-grid">
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" />
+            <path d="M12 7v5l3.5 3.5" />
+          </svg></div>
+        <p class="rp-label">Investimento</p>
+        <p class="rp-value" id="val-investimento">R$ 0,00</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Valor total gasto nas campanhas de anúncios durante este período.</div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+            <polyline points="17 6 23 6 23 12" />
+          </svg></div>
+        <p class="rp-label">Receita</p>
+        <p class="rp-value" id="val-receita">R$ 0,00</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Valor financeiro total gerado por todas as vendas concretizadas.</div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01z" />
+          </svg></div>
+        <p class="rp-label">ROAS</p>
+        <p class="rp-value" id="val-roas">0,00×</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Retorno sobre o investimento.</div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <rect x="2" y="7" width="20" height="14" rx="2" />
+            <path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2" />
+            <line x1="12" y1="12" x2="12" y2="16" />
+            <line x1="10" y1="14" x2="14" y2="14" />
+          </svg></div>
+        <p class="rp-label">Ticket Médio</p>
+        <p class="rp-value" id="val-ticket">R$ 0,00</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Valor médio que cada cliente gastou ao fazer uma compra na sua loja.</div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 01-8 0" />
+          </svg></div>
+        <p class="rp-label">Vendas</p>
+        <p class="rp-value" id="val-vendas">0</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Quantidade total de pedidos aprovados e finalizados no período.</div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" />
+          </svg></div>
+        <p class="rp-label">Mensagens</p>
+        <p class="rp-value" id="val-mensagens">0</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Quantidade de pessoas que entraram em contato enviando mensagens pelos
+            anúncios.</div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="2" y1="12" x2="22" y2="12" />
+            <path d="M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20" />
+          </svg></div>
+        <p class="rp-label">Visitas no Site</p>
+        <p class="rp-value" id="val-visitas">0</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Total de acessos e cliques que direcionaram o público para o seu site.
+          </div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+            <circle cx="12" cy="12" r="3" />
+          </svg></div>
+        <p class="rp-label">Impressões</p>
+        <p class="rp-value" id="val-impressoes">0</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Quantas vezes no total os seus anúncios apareceram nas telas dos usuários.
+          </div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 00-3-3.87" />
+            <path d="M16 3.13a4 4 0 010 7.75" />
+          </svg></div>
+        <p class="rp-label">Alcance</p>
+        <p class="rp-value" id="val-alcance">0</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Quantidade de pessoas únicas que viram seus anúncios pelo menos uma vez.
+          </div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <polyline points="17 1 21 5 17 9" />
+            <path d="M3 11V9a4 4 0 014-4h14" />
+            <polyline points="7 23 3 19 7 15" />
+            <path d="M21 13v2a4 4 0 01-4 4H3" />
+          </svg></div>
+        <p class="rp-label">Frequência</p>
+        <p class="rp-value" id="val-frequencia">0,00</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">A média de vezes que cada pessoa foi impactada e viu os seus anúncios.
+          </div>
+        </div>
+      </div>
+      <div class="rp-card">
+        <div class="rp-card-accent"></div>
+        <div class="rp-icon"><svg viewBox="0 0 24 24">
+            <circle cx="9" cy="21" r="1" />
+            <circle cx="20" cy="21" r="1" />
+            <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 002-1.61L23 6H6" />
+          </svg></div>
+        <p class="rp-label">Adições ao Carrinho</p>
+        <p class="rp-value dash" id="val-carrinho">—</p>
+        <div class="rp-saiba-mais-wrap">
+          <button class="rp-btn-saiba-mais">Saiba mais <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg></button>
+          <div class="rp-saiba-mais-conteudo">Ações contabilizadas quando os clientes adicionaram produtos no carrinho
+            do site.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="rp-charts-grid">
+      <div class="rp-chart-card">
+        <div class="rp-chart-header">
+          <h2>Investimento vs Receita</h2>
+          <span class="rp-badge" id="badge-roas">ROAS --×</span>
+        </div>
+        <div class="rp-chart-relative-container">
+          <div class="rp-chart-scroll-wrapper">
+            <div class="rp-chart-container"><canvas id="rpChart"></canvas></div>
+          </div>
+        </div>
+        <div class="rp-legend">
+          <div class="rp-legend-item">
+            <div class="rp-legend-dot" style="background:#FF5100;"></div>Investimento
+          </div>
+          <div class="rp-legend-item">
+            <div class="rp-legend-dot" style="background:#000;"></div>Receita
+          </div>
+        </div>
+      </div>
+
+      <div class="rp-chart-card">
+        <div class="rp-chart-header">
+          <h2>Destino do Público</h2>
+          <span class="rp-badge">Engajamento</span>
+        </div>
+        <div class="rp-chart-relative-container">
+          <div class="rp-chart-scroll-wrapper">
+            <div class="rp-chart-container"><canvas id="chartDestino"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rp-chart-card">
+        <div class="rp-chart-header">
+          <h2>Funil de Visibilidade</h2>
+          <span class="rp-badge">Atenção retida</span>
+        </div>
+        <div class="rp-chart-relative-container">
+          <div class="rp-chart-scroll-wrapper">
+            <div class="rp-chart-container"><canvas id="chartFunil"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rp-chart-card">
+        <div class="rp-chart-header">
+          <h2>Custo p/ Venda vs Ticket Médio</h2>
+          <span class="rp-badge">Margem Bruta</span>
+        </div>
+        <div class="rp-chart-relative-container">
+          <div class="rp-chart-scroll-wrapper">
+            <div class="rp-chart-container"><canvas id="chartCPA"></canvas></div>
+          </div>
+        </div>
+        <div class="rp-legend">
+          <div class="rp-legend-item">
+            <div class="rp-legend-dot" style="background:#64748b;"></div>Custo p/ Venda
+          </div>
+          <div class="rp-legend-item">
+            <div class="rp-legend-dot" style="background:#FF5100;"></div>Ticket Médio
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer
+      style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(0,0,0,0.05); color: #64748b; font-size: 12px;">
+      <p>Copyright &copy; 2026 Branx Agência. Todos os direitos reservados.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // ==========================================
+    // 1. CONFIGURAÇÃO DO GOOGLE SHEETS
+    // ==========================================
+    // Cole aqui o link CSV gerado em "Publicar na Web"
+    const LINK_DO_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQcNRM5PjVOCqNmMf_2Txlhxl27jrrAAi4G-mBV_hIsO6XN3EPpNftnXMIt09pzCAZtmhaS9krMMyQu/pub?output=csv';
+
+    // ==========================================
+    // 2. INICIALIZAÇÃO DOS GRÁFICOS (VAZIOS)
+    // ==========================================
+    Chart.defaults.font.family = 'Inter';
+
+    const chartInvestimento = new Chart(document.getElementById('rpChart'), {
+      type: 'bar',
+      data: { labels: ['Investimento', 'Receita'], datasets: [{ data: [0, 0], backgroundColor: ['#FF5100', '#000000'], borderRadius: 8, maxBarThickness: 40 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+    });
+
+    const chartDest = new Chart(document.getElementById('chartDestino'), {
+      type: 'doughnut',
+      data: { labels: ['Visitas no Site', 'Mensagens'], datasets: [{ data: [0, 0], backgroundColor: ['#FF5100', '#0f172a'], borderWidth: 2 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+    });
+
+    const chartFnl = new Chart(document.getElementById('chartFunil'), {
+      type: 'bar',
+      data: { labels: ['Impressões', 'Alcance', 'Visitas'], datasets: [{ data: [0, 0, 0], backgroundColor: ['#e2e8f0', '#cbd5e1', '#FF5100'], borderRadius: 6, maxBarThickness: 30 }] },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false } } }
+    });
+
+    const chartCusto = new Chart(document.getElementById('chartCPA'), {
+      type: 'bar',
+      data: { labels: ['Custo p/ Venda', 'Ticket Médio'], datasets: [{ data: [0, 0], backgroundColor: ['#64748b', '#FF5100'], borderRadius: 8, maxBarThickness: 40 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    // ==========================================
+    // 3. FUNÇÕES DE FORMATAÇÃO E LEITURA DE DADOS
+    // ==========================================
+
+    // Converte número em Moeda Brasileira (R$)
+    function moeda(valor) {
+      return 'R$ ' + parseFloat(valor).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Converte número normal colocando os pontos
+    function numero(valor) {
+      return parseFloat(valor).toLocaleString('pt-BR');
+    }
+
+    async function atualizarDashboard() {
+      try {
+        const response = await fetch(LINK_DO_CSV);
+        const csvText = await response.text();
+
+        // Separa as linhas do CSV
+        const linhas = csvText.split('\n');
+
+        // Pega a linha 2 (índice 1), onde estão os dados, e divide as colunas pela vírgula
+        // (Atenção: se os números no Sheets usarem vírgula, troque para split(';') se necessário, 
+        // mas o ideal é exportar no padrão americano numérico para evitar erros)
+        const dados = linhas[1].split(',');
+
+        // Mapeando os dados da planilha para variáveis
+        const cliente = dados[0];
+        const mes = dados[1];
+        const investimento = parseFloat(dados[2]);
+        const receita = parseFloat(dados[3]);
+        const roas = parseFloat(dados[4]);
+        const ticketMedio = parseFloat(dados[5]);
+        const vendas = parseInt(dados[6]);
+        const mensagens = parseInt(dados[7]);
+        const visitas = parseInt(dados[8]);
+        const impressoes = parseInt(dados[9]);
+        const alcance = parseInt(dados[10]);
+        const frequencia = parseFloat(dados[11]);
+        const carrinho = parseFloat(dados[12]);
+        const cpa = parseFloat(dados[13]);
+
+        // ==========================================
+        // 4. ATUALIZANDO OS TEXTOS NO HTML
+        // ==========================================
+        document.getElementById('titulo-cliente').innerText = `Relatório de Performance ${cliente}®`;
+        document.getElementById('subtitulo-mes').innerText = `${mes} · Resumo geral`;
+
+        document.getElementById('val-investimento').innerText = moeda(investimento);
+        document.getElementById('val-receita').innerText = moeda(receita);
+        document.getElementById('val-roas').innerText = roas.toLocaleString('pt-BR') + '×';
+        document.getElementById('val-ticket').innerText = moeda(ticketMedio);
+        document.getElementById('val-vendas').innerText = numero(vendas);
+        document.getElementById('val-mensagens').innerText = numero(mensagens);
+        document.getElementById('val-visitas').innerText = numero(visitas);
+        document.getElementById('val-impressoes').innerText = numero(impressoes);
+        document.getElementById('val-alcance').innerText = numero(alcance);
+        document.getElementById('val-frequencia').innerText = frequencia.toLocaleString('pt-BR');
+
+        // Validação simples para adições ao carrinho caso seja zero
+        // Validação e controle visual para adições ao carrinho
+        const elCarrinho = document.getElementById('val-carrinho');
+        if (carrinho > 0) {
+          elCarrinho.innerText = numero(carrinho);
+          elCarrinho.classList.remove('dash'); // Remove a cor cinza e tamanho menor
+        } else {
+          elCarrinho.innerText = "—";
+          elCarrinho.classList.add('dash'); // Adiciona/mantém a cor cinza se for zero
+        }
+        document.getElementById('badge-roas').innerText = `ROAS ${roas.toLocaleString('pt-BR')}×`;
+
+        // ==========================================
+        // 5. ATUALIZANDO OS GRÁFICOS
+        // ==========================================
+        chartInvestimento.data.datasets[0].data = [investimento, receita];
+        chartInvestimento.update();
+
+        chartDest.data.datasets[0].data = [visitas, mensagens];
+        chartDest.update();
+
+        chartFnl.data.datasets[0].data = [impressoes, alcance, visitas];
+        chartFnl.update();
+
+        chartCusto.data.datasets[0].data = [cpa, ticketMedio];
+        chartCusto.update();
+
+      } catch (erro) {
+        console.error("Erro ao puxar dados do Google Sheets:", erro);
+        document.getElementById('titulo-cliente').innerText = "Erro ao carregar dados";
+      }
+    }
+
+    // Inicia a função assim que a página carregar
+    atualizarDashboard();
+
+    // ==========================================
+    // CÓDIGO ANTIGO DOS BOTÕES "SAIBA MAIS" E SCROLL (MANTIDO)
+    // ==========================================
+    document.addEventListener('DOMContentLoaded', () => {
+      const botoesSaibaMais = document.querySelectorAll('.rp-btn-saiba-mais');
+      function scrollSuave(targetY, duration) { /* mantido reduzido para exemplo */ }
+      botoesSaibaMais.forEach(botao => {
+        botao.addEventListener('click', function (e) {
+          const cardAtual = this.closest('.rp-card');
+          cardAtual.classList.toggle('is-open');
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
