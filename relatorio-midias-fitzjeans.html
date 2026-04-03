@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="pt-BR">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Luminous Clothing</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffffff 0%, #f8f8f8 50%, #e8e8e8 100%);
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header */
+    .header {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(25px);
+      border-radius: 24px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+    }
+
+    .header-left {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 0.5rem;
+    }
+
+    .title {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #000;
+      margin: 0.5rem 0;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 400;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 16px;
+      padding: 0.75rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .search-box input {
+      border: none;
+      background: transparent;
+      outline: none;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      width: 150px;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #000000, #1a1a1a);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .avatar:hover {
+      transform: scale(1.05);
+    }
+
+    /* Social Media Section */
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .section-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 1.5rem;
+      padding-left: 0.5rem;
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(25px);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+
+    .card-icon.red {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.1));
+      color: #000;
+    }
+
+    .card-icon.black {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.05), rgba(0, 0, 0, 0.1));
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .card-label {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 0.5rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.85rem;
+      color: rgba(0, 0, 0, 0.5);
+    }
+
+    /* Large Cards */
+    .large-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(25px);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      transition: all 0.3s ease;
+    }
+
+    .large-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+    }
+
+    .large-card-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .large-card-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+    }
+
+    .large-card-info h3 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #000;
+      margin: 0 0 0.25rem 0;
+    }
+
+    .large-card-info p {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #000;
+      margin: 0;
+    }
+
+    .glass-button {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 12px;
+      padding: 0.875rem 1.5rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: #000;
+    }
+
+    .glass-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .glass-button.red:hover {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+
+    .glass-button.black:hover {
+      background: #000;
+      color: white;
+      border-color: #000;
+    }
+
+    /* Charts */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .chart-card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(25px);
+      border-radius: 24px;
+      padding: 2rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.9);
+    }
+
+    .chart-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 1.5rem;
+    }
+
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      height: 200px;
+      gap: 1rem;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(to top, #000, #333);
+      border-radius: 8px 8px 0 0;
+      position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .bar:hover {
+      opacity: 0.8;
+      transform: translateY(-4px);
+    }
+
+    .bar-value {
+      position: absolute;
+      top: -25px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #000;
+    }
+
+    .bar-label {
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: rgba(0, 0, 0, 0.6);
+      text-align: center;
+    }
+
+    .pie-chart {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .pie-visual {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #000 0deg 51.4deg,
+        rgba(0, 0, 0, 0.3) 51.4deg 115.7deg,
+        #333 115.7deg 231.4deg,
+        rgba(0, 0, 0, 0.15) 231.4deg 360deg
+      );
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+
+    .pie-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+
+    .legend-text {
+      font-size: 0.9rem;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .legend-value {
+      font-weight: 600;
+      color: #000;
+      margin-left: auto;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+      color: rgba(0, 0, 0, 0.5);
+      font-size: 0.9rem;
+    }
+
+    /* Icons */
+    .icon {
+      display: inline-block;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header {
+        padding: 1.5rem;
+      }
+
+      .title {
+        font-size: 1.4rem;
+      }
+
+      .cards-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .search-box input {
+        width: 100px;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="container">
+   <!-- Header -->
+   <div class="header">
+    <div class="header-left">
+     <div class="logo" id="company-name">
+      Fitz Jeans
+     </div>
+     <h1 class="title" id="report-title">Relatório Geral de Mídias – Fitz Jeans</h1>
+     <p class="subtitle" id="report-subtitle">Resumo mensal de produção e postagens - Agosto 2025</p>
+    </div>
+    <div class="header-right">
+     <div class="avatar" title="Fitz Jeans">
+      <img src="https://imgur.com/Oqx03RX.png" alt="Logo Fitz Jeans" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" onerror="this.style.display='none'; this.parentElement.innerHTML='FZ';">
+     </div>
+    </div>
+   </div><!-- Social Media Section -->
+   <div class="section">
+    <h2 class="section-title">
+     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; margin-right: 8px;">
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" /> <line x1="8" y1="21" x2="16" y2="21" /> <line x1="12" y1="17" x2="12" y2="21" />
+     </svg> Redes Sociais</h2>
+    <div class="cards-grid">
+     <div class="card">
+      <div class="card-icon red">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="7" height="7" /> <rect x="14" y="3" width="7" height="7" /> <rect x="14" y="14" width="7" height="7" /> <rect x="3" y="14" width="7" height="7" />
+       </svg>
+      </div>
+      <div class="card-label">
+       Feed
+      </div>
+      <div class="card-value">
+       14
+      </div>
+      <div class="card-subtitle">
+       postagens
+      </div>
+     </div>
+     <div class="card">
+      <div class="card-icon red">
+       <svg width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="5" y="2" width="14" height="20" rx="2" ry="2" /> <line x1="12" y1="18" x2="12.01" y2="18" />
+       </svg>
+      </div>
+      <div class="card-label">
+       Stories
+      </div>
+      <div class="card-value">
+       50+
+      </div>
+      <div class="card-subtitle">
+       postagens
+      </div>
+     </div>
+    </div>
+   </div><!-- Creation & Editing Section -->
+   <div class="section">
+    <h2 class="section-title">
+     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; margin-right: 8px;">
+      <path d="m2.7 10.3a2.41 2.41 0 0 0 0 3.41l7.59 7.59a2.41 2.41 0 0 0 3.41 0l7.59-7.59a2.41 2.41 0 0 0 0-3.41l-7.59-7.59a2.41 2.41 0 0 0-3.41 0Z" /> <path d="M8 12h8" /> <path d="m12 8 4 4-4 4" />
+     </svg> Criação &amp; Edição</h2>
+    <div class="cards-grid">
+     <div class="large-card">
+      <div class="large-card-header">
+       <div class="large-card-icon card-icon black">
+        <svg width="28" height="28" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+         <path d="m9.06 11.9 8.07-8.06a2.85 2.85 0 1 1 4.03 4.03l-8.06 8.08" /> <path d="m7.07 14.94-1.13 6.97 6.97-1.13" /> <path d="m16.06 13.94 4.03 4.03-2 2-4.03-4.03" /> <path d="m19.5 8.5-3-3" />
+        </svg>
+       </div>
+       <div class="large-card-info">
+        <h3>Artes em Design</h3>
+        <p>39</p>
+       </div>
+      </div><a href="https://drive.google.com/drive/folders/1cQHivWQ9SAzGJzA7OBVa1cvWtsSTiIWD?usp=sharing" class="glass-button red" target="_blank" rel="noopener noreferrer">
+       <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+       </svg> Acessar pasta no Drive </a>
+     </div>
+     <div class="large-card">
+      <div class="large-card-header">
+       <div class="large-card-icon card-icon black">
+        <svg width="28" height="28" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+         <polygon points="23 7 16 12 23 17 23 7" /> <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+        </svg>
+       </div>
+       <div class="large-card-info">
+        <h3>Edições de Vídeos</h3>
+        <p>35</p>
+       </div>
+      </div><a href="https://drive.google.com/drive/folders/1A-XR-LGOWeRd9Y4cdw7J0dhJTOsbQtol?usp=sharing" class="glass-button black" target="_blank" rel="noopener noreferrer">
+       <svg width="16" height="16" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+       </svg> Acessar pasta no Drive </a>
+     </div>
+    </div>
+   </div><!-- Performance Charts -->
+   <div class="section">
+    <h2 class="section-title">
+     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; margin-right: 8px;">
+      <line x1="18" y1="20" x2="18" y2="10" /> <line x1="12" y1="20" x2="12" y2="4" /> <line x1="6" y1="20" x2="6" y2="14" />
+     </svg> Gráficos de Desempenho</h2>
+    <div class="charts-grid">
+     <div class="chart-card">
+      <div class="chart-title">
+       Comparativo de Produção
+      </div>
+      <div class="bar-chart">
+       <div class="bar" style="height: 28%;">
+        <span class="bar-value">14</span>
+       </div>
+       <div class="bar" style="height: 100%;">
+        <span class="bar-value">50+</span>
+       </div>
+       <div class="bar" style="height: 78%;">
+        <span class="bar-value">39</span>
+       </div>
+       <div class="bar" style="height: 70%;">
+        <span class="bar-value">35</span>
+       </div>
+      </div>
+      <div style="display: flex; justify-content: space-around; margin-top: 1rem;">
+       <div class="bar-label">
+        Feed
+       </div>
+       <div class="bar-label">
+        Stories
+       </div>
+       <div class="bar-label">
+        Artes
+       </div>
+       <div class="bar-label">
+        Vídeos
+       </div>
+      </div>
+     </div>
+     <div class="chart-card">
+      <div class="chart-title">
+       Distribuição por Categoria
+      </div>
+      <div class="pie-chart">
+       <div class="pie-visual"></div>
+       <div class="pie-legend">
+        <div class="legend-item">
+         <div class="legend-color" style="background: #000;"></div><span class="legend-text">Feed</span> <span class="legend-value">10%</span>
+        </div>
+        <div class="legend-item">
+         <div class="legend-color" style="background: rgba(0, 0, 0, 0.3);"></div><span class="legend-text">Stories</span> <span class="legend-value">35%</span>
+        </div>
+        <div class="legend-item">
+         <div class="legend-color" style="background: #333;"></div><span class="legend-text">Artes</span> <span class="legend-value">48%</span>
+        </div>
+        <div class="legend-item">
+         <div class="legend-color" style="background: rgba(0, 0, 0, 0.15);"></div><span class="legend-text">Vídeos</span> <span class="legend-value">7%</span>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div><!-- Footer -->
+   <div class="footer" id="footer-text">
+    Fitz Jeans © 2025 — Dashboard de Relatório de Mídias
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      company_name: "Fitz Jeans",
+      report_title: "Relatório Geral de Mídias – Fitz Jeans",
+      report_subtitle: "Resumo mensal de produção e postagens - Agosto 2025",
+      footer_text: "Fitz Jeans © 2025 — Dashboard de Relatório de Mídias",
+      background_color: "#ffffff",
+      accent_color: "#dc2626",
+      text_color: "#000000",
+      font_family: "Poppins",
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      const companyName = config.company_name || defaultConfig.company_name;
+      const reportTitle = config.report_title || defaultConfig.report_title;
+      const reportSubtitle = config.report_subtitle || defaultConfig.report_subtitle;
+      const footerText = config.footer_text || defaultConfig.footer_text;
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const baseFontStack = 'sans-serif';
+
+      document.getElementById('company-name').textContent = companyName;
+      document.getElementById('report-title').textContent = reportTitle;
+      document.getElementById('report-subtitle').textContent = reportSubtitle;
+      document.getElementById('footer-text').textContent = footerText;
+
+      document.body.style.fontFamily = `${customFont}, ${baseFontStack}`;
+      document.getElementById('company-name').style.fontSize = `${baseSize * 1.5}px`;
+      document.getElementById('report-title').style.fontSize = `${baseSize * 1.8}px`;
+      document.getElementById('report-subtitle').style.fontSize = `${baseSize * 0.95}px`;
+      document.getElementById('footer-text').style.fontSize = `${baseSize * 0.9}px`;
+
+      const sectionTitles = document.querySelectorAll('.section-title');
+      sectionTitles.forEach(title => {
+        title.style.fontSize = `${baseSize * 1.3}px`;
+      });
+
+      const cardLabels = document.querySelectorAll('.card-label');
+      cardLabels.forEach(label => {
+        label.style.fontSize = `${baseSize * 0.9}px`;
+      });
+
+      const cardValues = document.querySelectorAll('.card-value');
+      cardValues.forEach(value => {
+        value.style.fontSize = `${baseSize * 2.5}px`;
+      });
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => {
+                config.background_color = value;
+                window.elementSdk.setConfig({ background_color: value });
+              }
+            },
+            {
+              get: () => config.accent_color || defaultConfig.accent_color,
+              set: (value) => {
+                config.accent_color = value;
+                window.elementSdk.setConfig({ accent_color: value });
+              }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => {
+                config.text_color = value;
+                window.elementSdk.setConfig({ text_color: value });
+              }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => {
+              config.font_family = value;
+              window.elementSdk.setConfig({ font_family: value });
+            }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => {
+              config.font_size = value;
+              window.elementSdk.setConfig({ font_size: value });
+            }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["company_name", config.company_name || defaultConfig.company_name],
+          ["report_title", config.report_title || defaultConfig.report_title],
+          ["report_subtitle", config.report_subtitle || defaultConfig.report_subtitle],
+          ["footer_text", config.footer_text || defaultConfig.footer_text]
+        ])
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e686f9ac0d668cd',t:'MTc3NTIyMzExMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
